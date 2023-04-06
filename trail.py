@@ -5,6 +5,8 @@ from mountain import Mountain
 
 from typing import TYPE_CHECKING, Union
 
+from data_structures.linked_stack import LinkedStack
+
 # Avoid circular imports for typing.
 if TYPE_CHECKING:
     from personality import WalkerPersonality
@@ -25,6 +27,8 @@ class TrailSplit:
 
     def remove_branch(self) ->  TrailStore:
         """Removes the branch, should just leave the remaining following trail."""
+        self.path_bottom = Trail(None)
+        self.path_top = Trail(None)
         return self.path_follow
 
 @dataclass
@@ -39,21 +43,33 @@ class TrailSeries:
     mountain: Mountain
     following: Trail
 
+
     def remove_mountain(self) -> TrailStore:
         """Removes the mountain at the beginning of this series."""
-        raise NotImplementedError()
+        if self.following == None:
+            return None
+        self.new_trail = Trail(self.following)
+        return self
+
 
     def add_mountain_before(self, mountain: Mountain) -> TrailStore:
         """Adds a mountain in series before the current one."""
-        raise NotImplementedError()
+        self.next_trail = self.following 
+        self.new_trail = Trail(TrailSeries(mountain, self.next_trail))
+        return self.new_trail
+        
+        
 
     def add_empty_branch_before(self) -> TrailStore:
         """Adds an empty branch, where the current trailstore is now the following path."""
-        raise NotImplementedError()
+        pass
+
 
     def add_mountain_after(self, mountain: Mountain) -> TrailStore:
         """Adds a mountain after the current mountain, but before the following trail."""
-        raise NotImplementedError()
+        for i in self:
+            self.current_layer = self.following
+
 
     def add_empty_branch_after(self) -> TrailStore:
         """Adds an empty branch after the current mountain, but before the following trail."""
@@ -63,16 +79,29 @@ TrailStore = Union[TrailSplit, TrailSeries, None]
 
 @dataclass
 class Trail:
-
+    
     store: TrailStore = None
+    def __init__(self) -> None:
+        if self.store == TrailStore[0]:
+            TrailSplit(Trail(None),Trail(None),Trail(None))
+        elif self.store == TrailStore[1]:
+            TrailSeries(None,None)
+        else:
+            None
 
+
+    
     def add_mountain_before(self, mountain: Mountain) -> Trail:
         """Adds a mountain before everything currently in the trail."""
-        raise NotImplementedError()
+        self.new_trail = TrailSeries.add_mountain_before(mountain)
+        
 
     def add_empty_branch_before(self) -> Trail:
         """Adds an empty branch before everything currently in the trail."""
-        raise NotImplementedError()
+        self.new_trail = TrailSplit(None,None,None)
+        self.next_trail = self.store.following
+
+        return self.new_trail
 
     def follow_path(self, personality: WalkerPersonality) -> None:
         """Follow a path and add mountains according to a personality."""
