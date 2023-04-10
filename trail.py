@@ -73,7 +73,7 @@ class TrailSeries:
     def add_empty_branch_after(self) -> TrailStore:
         """Adds an empty branch after the current mountain, but before the following trail."""
         
-        self.new_trail = Trail(TrailSeries(self.mountain,Trail(TrailSplit(Trail(None),Trail(None),Trail(None))))) #Might have to change path_follow to self.following
+        self.new_trail = Trail(TrailSeries(self.mountain,Trail(TrailSplit(Trail(None),Trail(None),self.following)))) #Might have to change path_follow to self.following
         return self.new_trail.store
 
 TrailStore = Union[TrailSplit, TrailSeries, None]
@@ -122,7 +122,24 @@ class Trail:
 
     def collect_all_mountains(self) -> list[Mountain]:
         """Returns a list of all mountains on the trail."""
-        raise NotImplementedError()
+        self.frontier = LinkedStack(1000)
+        self.frontier.push(self)
+        self.all_mountains = []
+        while not self.frontier.is_empty():
+            self.trail_to_explore = self.frontier.pop()
+            while self.trail_to_explore.store != None:
+                if isinstance(self.trail_to_explore.store,TrailSplit): 
+                        self.trail_to_explore = self.trail_to_explore.store.path_top #is wrong need to fix 
+                        self.frontier.push(self.trail_to_explore.store.path_follow)
+                        self.frontier.push(self.trail_to_explore.store.path_bottom)
+                else:
+                    self.all_mountains.append(self.trail_to_explore.store.mountain)
+                    if self.trail_to_explore.store.following.store == None:
+                        if self.frontier.is_empty():
+                            break    
+                        self.trail_to_explore = self.frontier.pop()
+                    else:
+                        self.trail_to_explore = self.trail_to_explore.store.following 
 
     def length_k_paths(self, k) -> list[list[Mountain]]: # Input to this should not exceed k > 50, at most 5 branches.
         """
@@ -131,4 +148,36 @@ class Trail:
 
         Paths are unique if they take a different branch, even if this results in the same set of mountains.
         """
-        raise NotImplementedError()
+        self.all_paths = []
+        self.visited = []
+        self.frontier = LinkedStack(1000)
+        self.frontier.push(self)
+        while not self.frontier.is_empty():
+            self.current_path = []
+            self.trail_to_explore = self
+            while self.trail_to_explore.store != None:
+                if isinstance(self.trail_to_explore.store,TrailSplit):
+                    self.frontier.push(self.trail_to_explore.store.path_follow)
+                    if self.trail_to_explore.store.path_top in self.visited:
+                        self.trail_to_explore = self.trail_to_explore.store.path_bottom
+                    else:
+                        self.trail_to_explore = self.trail_to_explore.store.path_top
+                else:
+                    self.visited.append(self.trail_to_explore)
+                    if self.trail_to_explore.store.following.store == None:
+                        self.current_path.append(self.trail_to_explore.store.mountain)
+                        if len(self.current_path) > k:
+                            break
+                        if not self.frontier.is_empty():
+                            if len(self.frontier) == 1:
+                                self.all_paths.append(self.current_path[:k])
+                            self.trail_to_explore = self.frontier.pop() 
+                    else:
+                        self.trail_to_explore = self.trail_to_explore.store.following
+                        self.visited.append(self.trail_to_explore)
+
+        print(self.all_paths)        
+
+        return self.all_paths
+
+
