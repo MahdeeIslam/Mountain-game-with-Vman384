@@ -6,7 +6,6 @@ from mountain import Mountain
 from typing import TYPE_CHECKING, Union
 
 from data_structures.linked_stack import LinkedStack
-
 # Avoid circular imports for typing.
 if TYPE_CHECKING:
     from personality import WalkerPersonality
@@ -98,7 +97,28 @@ class Trail:
 
     def follow_path(self, personality: WalkerPersonality) -> None:
         """Follow a path and add mountains according to a personality."""
-        raise NotImplementedError()
+        self.frontier = LinkedStack(1000)
+        self.frontier.push(self)
+        while not self.frontier.is_empty():
+            self.trail_to_explore = self.frontier.pop()
+            while self.trail_to_explore.store != None:
+                if isinstance(self.trail_to_explore.store,TrailSplit):
+                    is_top = personality.select_branch(self.trail_to_explore.store.path_top,self.trail_to_explore.store.path_bottom)
+                    if is_top:
+                        self.frontier.push(self.trail_to_explore.store.path_follow)
+                        self.trail_to_explore = self.trail_to_explore.store.path_top
+                    else:
+                        self.frontier.push(self.trail_to_explore.store.path_follow)
+                        self.trail_to_explore = self.trail_to_explore.store.path_bottom
+                else:
+                    personality.add_mountain(self.trail_to_explore.store.mountain)
+                    if self.trail_to_explore.store.following.store == None:
+                        if self.frontier.is_empty():
+                            break    
+                        self.trail_to_explore = self.frontier.pop()
+                    else:
+                        self.trail_to_explore = self.trail_to_explore.store.following 
+            
 
     def collect_all_mountains(self) -> list[Mountain]:
         """Returns a list of all mountains on the trail."""
