@@ -141,43 +141,48 @@ class Trail:
                     else:
                         self.trail_to_explore = self.trail_to_explore.store.following 
 
-    def length_k_paths(self, k) -> list[list[Mountain]]: # Input to this should not exceed k > 50, at most 5 branches.
+    def length_k_paths(self, k, all_paths = []) -> list[list[Mountain]]: # Input to this should not exceed k > 50, at most 5 branches.
         """
         Returns a list of all paths of containing exactly k mountains.
         Paths are represented as lists of mountains.
 
         Paths are unique if they take a different branch, even if this results in the same set of mountains.
         """
-        self.all_paths = []
-        self.visited = []
-        self.frontier = LinkedStack(1000)
-        self.frontier.push(self)
-        while not self.frontier.is_empty():
-            self.current_path = []
-            self.trail_to_explore = self
-            while self.trail_to_explore.store != None:
-                if isinstance(self.trail_to_explore.store,TrailSplit):
-                    self.frontier.push(self.trail_to_explore.store.path_follow)
-                    if self.trail_to_explore.store.path_top in self.visited:
-                        self.trail_to_explore = self.trail_to_explore.store.path_bottom
-                    else:
-                        self.trail_to_explore = self.trail_to_explore.store.path_top
-                else:
-                    self.visited.append(self.trail_to_explore)
-                    if self.trail_to_explore.store.following.store == None:
-                        self.current_path.append(self.trail_to_explore.store.mountain)
-                        if len(self.current_path) > k:
+        self.all_paths = all_paths
+        self.k = k
+        while self.store != None:
+            self.frontier = LinkedStack(100)
+            self.frontier.push(self)
+            self.is_following = False
+            while not self.frontier.is_empty():
+                self.current_path = []
+                self.trail_to_explore = self.frontier.pop()
+                while self.trail_to_explore.store != None:
+                    if isinstance(self.trail_to_explore.store,TrailSplit):
+                        self.frontier.push(self.trail_to_explore.store.path_follow)
+                        if self.trail_to_explore.store.path_top.store != None:
+                            self.trail_to_explore = self.trail_to_explore.store.path_top
+                            self.last_trail = self.trail_to_explore
+                        elif self.trail_to_explore.store.path_bottom.store != None:
+                            self.trail_to_explore = self.trail_to_explore.store.path_bottom
+                        else:
+                            self.store = Trail(None)
                             break
-                        if not self.frontier.is_empty():
-                            if len(self.frontier) == 1:
-                                self.all_paths.append(self.current_path[:k])
-                            self.trail_to_explore = self.frontier.pop() 
                     else:
-                        self.trail_to_explore = self.trail_to_explore.store.following
-                        self.visited.append(self.trail_to_explore)
+                        self.current_path.append(self.trail_to_explore.store.mountain)
+                        if self.trail_to_explore.store.following.store == None:
+                            if not self.is_following:
+                                self.last_trail = Trail(None)
+                                self.is_following = True
+                            if not self.frontier.is_empty():
+                                self.trail_to_explore = self.frontier.pop()
+                            else:
+                                break
 
-        print(self.all_paths)        
-
+                        else:
+                            self.trail_to_explore = self.trail_to_explore.store.following
+            if len(self.current_path) == self.k:
+                self.all_paths.append(self.current_path)
         return self.all_paths
 
 
