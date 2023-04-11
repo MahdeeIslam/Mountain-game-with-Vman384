@@ -179,10 +179,5 @@ class Trail:
                             else:
                                 break
 
-                        else:
-                            self.trail_to_explore = self.trail_to_explore.store.following
-            if len(self.current_path) == self.k:
-                self.all_paths.append(self.current_path)
-        return self.all_paths
 
 
