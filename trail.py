@@ -122,62 +122,88 @@ class Trail:
 
     def collect_all_mountains(self) -> list[Mountain]:
         """Returns a list of all mountains on the trail."""
-        self.frontier = LinkedStack(1000)
-        self.frontier.push(self)
-        self.all_mountains = []
-        while not self.frontier.is_empty():
-            self.trail_to_explore = self.frontier.pop()
-            while self.trail_to_explore.store != None:
-                if isinstance(self.trail_to_explore.store,TrailSplit): 
-                        self.trail_to_explore = self.trail_to_explore.store.path_top #is wrong need to fix 
-                        self.frontier.push(self.trail_to_explore.store.path_follow)
-                        self.frontier.push(self.trail_to_explore.store.path_bottom)
+        self.frontier = LinkedStack(100)
+        self.visited = []
+        self.current_path = []
+        self.trail_to_explore = self
+        while self.trail_to_explore.store != None:
+            if isinstance(self.trail_to_explore.store,TrailSplit):
+                if self.trail_to_explore.store.path_top not in self.visited:
+                    self.frontier.push(self.trail_to_explore.store.path_follow)
+                    self.trail_to_explore = self.trail_to_explore.store.path_top
+                elif self.trail_to_explore.store.path_bottom not in self.visited:
+                    self.frontier.push(self.trail_to_explore.store.path_follow)
+                    self.trail_to_explore = self.trail_to_explore.store.path_bottom
+                
                 else:
-                    self.all_mountains.append(self.trail_to_explore.store.mountain)
-                    if self.trail_to_explore.store.following.store == None:
-                        if self.frontier.is_empty():
-                            break    
+                    self.visited.append(self.trail_to_explore)
+                    self.trail_to_explore = self
+                    continue
+            else:
+                if self.trail_to_explore.store == None:
+                    self.trail_to_explore = self.frontier.pop()
+                    break
+                if self.trail_to_explore.store.mountain not in self.current_path:
+                    self.current_path.append(self.trail_to_explore.store.mountain)
+                if self.trail_to_explore.store.following.store == None:
+                    self.visited.append(self.trail_to_explore)
+                    if not self.frontier.is_empty():
                         self.trail_to_explore = self.frontier.pop()
-                    else:
-                        self.trail_to_explore = self.trail_to_explore.store.following 
+                        if not self.frontier.is_empty() and self.trail_to_explore.store == None:
+                            self.trail_to_explore = self.frontier.pop()
 
-    def length_k_paths(self, k, all_paths = []) -> list[list[Mountain]]: # Input to this should not exceed k > 50, at most 5 branches.
+                    else:
+                        self.trail_to_explore = self
+
+                else:
+                    self.trail_to_explore = self.trail_to_explore.store.following
+        return self.current_path
+
+    def length_k_paths(self, k) -> list[list[Mountain]]: # Input to this should not exceed k > 50, at most 5 branches.
         """
         Returns a list of all paths of containing exactly k mountains.
         Paths are represented as lists of mountains.
 
         Paths are unique if they take a different branch, even if this results in the same set of mountains.
         """
-        self.all_paths = all_paths
-        self.k = k
-        while self.store != None:
-            self.frontier = LinkedStack(100)
-            self.frontier.push(self)
-            self.is_following = False
-            while not self.frontier.is_empty():
+        self.frontier = LinkedStack(100)
+        self.visited = []
+        self.current_path = []
+        self.all_paths = []
+        self.trail_to_explore = self
+        while self.trail_to_explore.store != None:
+            if len(self.current_path) == k:
+                self.all_paths.append(self.current_path)
                 self.current_path = []
-                self.trail_to_explore = self.frontier.pop()
-                while self.trail_to_explore.store != None:
-                    if isinstance(self.trail_to_explore.store,TrailSplit):
-                        self.frontier.push(self.trail_to_explore.store.path_follow)
-                        if self.trail_to_explore.store.path_top.store != None:
-                            self.trail_to_explore = self.trail_to_explore.store.path_top
-                            self.last_trail = self.trail_to_explore
-                        elif self.trail_to_explore.store.path_bottom.store != None:
-                            self.trail_to_explore = self.trail_to_explore.store.path_bottom
-                        else:
-                            self.store = Trail(None)
-                            break
-                    else:
-                        self.current_path.append(self.trail_to_explore.store.mountain)
-                        if self.trail_to_explore.store.following.store == None:
-                            if not self.is_following:
-                                self.last_trail = Trail(None)
-                                self.is_following = True
-                            if not self.frontier.is_empty():
-                                self.trail_to_explore = self.frontier.pop()
-                            else:
-                                break
+            if isinstance(self.trail_to_explore.store,TrailSplit):
+                if self.trail_to_explore.store.path_top not in self.visited:
+                    self.frontier.push(self.trail_to_explore.store.path_follow)
+                    self.trail_to_explore = self.trail_to_explore.store.path_top
+                elif self.trail_to_explore.store.path_bottom not in self.visited:
+                    self.frontier.push(self.trail_to_explore.store.path_follow)
+                    self.trail_to_explore = self.trail_to_explore.store.path_bottom
+                
+                else:
+                    self.visited.append(self.trail_to_explore)
+                    self.trail_to_explore = self
+                    continue
+            else:
+                if self.trail_to_explore.store == None:
+                    self.trail_to_explore = self.frontier.pop()
+                    break
+                self.current_path.append(self.trail_to_explore.store.mountain)
+                if self.trail_to_explore.store.following.store == None:
+                    self.visited.append(self.trail_to_explore)
+                    if not self.frontier.is_empty():
+                        self.trail_to_explore = self.frontier.pop()
+                        if not self.frontier.is_empty() and self.trail_to_explore.store == None:
+                            self.trail_to_explore = self.frontier.pop()
 
+                    else:
+                        self.trail_to_explore = self
+
+                else:
+                    self.trail_to_explore = self.trail_to_explore.store.following
+        return self.all_paths
 
 
