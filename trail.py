@@ -83,7 +83,8 @@ class Trail:
     
     store: TrailStore = None
 
-
+    def __hash__(self) -> int:
+        return hash(TrailStore)
     
     def add_mountain_before(self, mountain: Mountain) -> Trail:
         """Adds a mountain before everything currently in the trail."""
@@ -123,7 +124,7 @@ class Trail:
     def collect_all_mountains(self) -> list[Mountain]:
         """Returns a list of all mountains on the trail."""
         self.frontier = LinkedStack(100)
-        self.visited = []
+        self.visited = set()
         self.current_path = []
         self.trail_to_explore = self
         while self.trail_to_explore.store != None:
@@ -136,7 +137,7 @@ class Trail:
                     self.trail_to_explore = self.trail_to_explore.store.path_bottom
                 
                 else:
-                    self.visited.append(self.trail_to_explore)
+                    self.visited.add(self.trail_to_explore)
                     self.trail_to_explore = self
                     continue
             else:
@@ -146,7 +147,7 @@ class Trail:
                 if self.trail_to_explore.store.mountain not in self.current_path:
                     self.current_path.append(self.trail_to_explore.store.mountain)
                 if self.trail_to_explore.store.following.store == None:
-                    self.visited.append(self.trail_to_explore)
+                    self.visited.add(self.trail_to_explore)
                     if not self.frontier.is_empty():
                         self.trail_to_explore = self.frontier.pop()
                         if not self.frontier.is_empty() and self.trail_to_explore.store == None:
@@ -167,7 +168,7 @@ class Trail:
         Paths are unique if they take a different branch, even if this results in the same set of mountains.
         """
         self.frontier = LinkedStack(100)
-        self.visited = []
+        self.visited = set()
         self.current_path = []
         self.all_paths = []
         self.trail_to_explore = self
@@ -184,7 +185,7 @@ class Trail:
                     self.trail_to_explore = self.trail_to_explore.store.path_bottom
                 
                 else:
-                    self.visited.append(self.trail_to_explore)
+                    self.visited.add(self.trail_to_explore)
                     self.trail_to_explore = self
                     continue
             else:
@@ -193,7 +194,7 @@ class Trail:
                     break
                 self.current_path.append(self.trail_to_explore.store.mountain)
                 if self.trail_to_explore.store.following.store == None:
-                    self.visited.append(self.trail_to_explore)
+                    self.visited.add(self.trail_to_explore)
                     if not self.frontier.is_empty():
                         self.trail_to_explore = self.frontier.pop()
                         if not self.frontier.is_empty() and self.trail_to_explore.store == None:
