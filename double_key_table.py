@@ -81,16 +81,7 @@ class DoubleKeyTable(Generic[K1, K2, V]):
         return value
 
     
-    def _get_primary_table_index(self, key1: K1) -> int:
-        position = self.hash1(key1) % self.table_size
-        for _ in self.primary_table:
-            if self.primary_table[position] is None:
-                raise KeyError(key1)
-            elif self.primary_table[position][0] == key1:
-                return position
-            else:
-                position = (position + 1) % self.table_size
-        raise KeyError(key1)
+   
 
 
   
