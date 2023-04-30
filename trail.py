@@ -199,7 +199,6 @@ class Trail:
                         self.trail_to_explore = self.frontier.pop()
                         if not self.frontier.is_empty() and self.trail_to_explore.store == None:
                             self.trail_to_explore = self.frontier.pop()
-
                     else:
                         self.trail_to_explore = self
 
