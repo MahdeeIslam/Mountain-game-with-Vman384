@@ -51,25 +51,22 @@ class MountainManager:
     def group_by_difficulty(self):
         '''
         Returns a list of lists of all mountains, grouped by and sorted by ascending difficulty.
-        sets are hash tables in python so checking if in is O(1)
         '''
         self.grouped = []
-        self.checked = set()
-        self.temp_store = self.mountain_store.array
-        for index in range(len(self.temp_store)):
-            if self.temp_store[index] == None or index in self.checked:
-                pass
+        self.tmp = self.mountain_store.values() #O(N)
+        self.sorted = mergesort(self.tmp) #O(N log N)
+        self.current_difficulty_list = []
+        for mountain in self.sorted: #O(N)
+            if len(self.current_difficulty_list) == 0:
+                self.current_difficulty = mountain.difficulty_level
+            if mountain.difficulty_level == self.current_difficulty:
+                self.current_difficulty_list.append(mountain)
             else:
-                self.current_difficulty_list = [self.temp_store[index][1]]
-                self.current_difficulty = self.temp_store[index][1].difficulty_level
-                self.checked.add(index)
-                for index_to_compare in range(len(self.temp_store)):
-                    if self.temp_store[index_to_compare] == None:
-                        pass
-                    elif self.temp_store[index_to_compare][1].difficulty_level == self.current_difficulty:
-                        self.current_difficulty_list.append(self.temp_store[index_to_compare][1])
-                        self.checked.add(index_to_compare)
                 self.grouped.append(self.current_difficulty_list)
-        return mergesort(self.grouped)
+                self.current_difficulty_list = [mountain]
+                self.current_difficulty = mountain.difficulty_level
+        self.grouped.append(self.current_difficulty_list)
+        return self.grouped
+
 
 
