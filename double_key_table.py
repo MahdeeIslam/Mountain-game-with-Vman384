@@ -50,7 +50,6 @@ class DoubleKeyTable(Generic[K1, K2, V]):
         else:
             self.internal_table_sizes = LinearProbeTable.TABLE_SIZES
 
-        self._load_factor = 0
         self._num_entries = 0
 
        
@@ -82,11 +81,6 @@ class DoubleKeyTable(Generic[K1, K2, V]):
 
     
    
-
-
-  
-
-    
     def _linear_probe(self, key1: K1, key2: K2, is_insert: bool) -> tuple[int, int]:
         """
         Find the correct position for this key in the hash table using linear probing.
