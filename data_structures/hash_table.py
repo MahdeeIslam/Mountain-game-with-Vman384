@@ -163,27 +163,27 @@ class LinearProbeTable(Generic[K, V]):
         if len(self) > self.table_size / 2:
             self._rehash()
 
-        def __delitem__(self, key: K) -> None:
-            """
-            Deletes a (key, value) pair in our hash table.
+    def __delitem__(self, key: K) -> None:
+        """
+        Deletes a (key, value) pair in our hash table.
 
-            :complexity best: O(hash(key)) deleting item is not probed and in correct spot.
-            :complexity worst: O(N*hash(key)+N^2*comp(K)) deleting item is midway through large chain.
-            :raises KeyError: when the key doesn't exist.
-            """
-            position = self._linear_probe(key, False)
-            # Remove the element
+        :complexity best: O(hash(key)) deleting item is not probed and in correct spot.
+        :complexity worst: O(N*hash(key)+N^2*comp(K)) deleting item is midway through large chain.
+        :raises KeyError: when the key doesn't exist.
+        """
+        position = self._linear_probe(key, False)
+        # Remove the element
+        self.array[position] = None
+        self.count -= 1
+        # Start moving over the cluster
+        position = (position + 1) % self.table_size
+        while self.array[position] is not None:
+            key2, value = self.array[position]
             self.array[position] = None
-            self.count -= 1
-            # Start moving over the cluster
+            # Reinsert.
+            newpos = self._linear_probe(key2, True)
+            self.array[newpos] = (key2, value)
             position = (position + 1) % self.table_size
-            while self.array[position] is not None:
-                key2, value = self.array[position]
-                self.array[position] = None
-                # Reinsert.
-                newpos = self._linear_probe(key2, True)
-                self.array[newpos] = (key2, value)
-                position = (position + 1) % self.table_size
 
     def is_empty(self) -> bool:
         return self.count == 0

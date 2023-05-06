@@ -8,7 +8,7 @@ class MountainManager:
     def __init__(self) -> None:
         self.mountain_store = LinearProbeTable()
 
-    def add_mountain(self, mountain: Mountain):
+    def add_mountain(self, mountain: Mountain)-> None:
         '''
         Add a mountain to the manager
 
@@ -19,7 +19,7 @@ class MountainManager:
         except: #Constant --> O(1)
             print("Error: could not add mountain to manager, table is full")  #Constant --> O(1)
 
-    def remove_mountain(self, mountain: Mountain):
+    def remove_mountain(self, mountain: Mountain)-> None:
         '''
         Remove a mountain from the manager
 
@@ -38,7 +38,7 @@ class MountainManager:
         
         '''
         try: #Constant --> O(1)
-            self.mountain_store.__delitem__(mountain.name) # O(1) or O(N*hash(key) + N^2comp(K))
+            del self.mountain_store[mountain.name] # O(1) or O(N*hash(key) + N^2comp(K))
         except KeyError: #Constant --> O(1)
             print("mountain not in list") #Constant --> O(1)
 
@@ -65,7 +65,7 @@ class MountainManager:
         except KeyError: #Constant --> O(1)
             print("mountain not in list") #Constant --> O(1)
 
-    def mountains_with_difficulty(self, diff: int):
+    def mountains_with_difficulty(self, diff: int)-> None:
         '''
         Return a list of all mountains with this difficulty.
 
@@ -89,7 +89,7 @@ class MountainManager:
         return self.matching_difficulty #Retunring is constant --> O(1)
  
 
-    def group_by_difficulty(self):
+    def group_by_difficulty(self) -> list[list[Mountain]]:
         '''
         Returns a list of lists of all mountains, grouped by and sorted by ascending difficulty.
 
@@ -114,7 +114,7 @@ class MountainManager:
             if len(self.current_difficulty_list) == 0:  #Checking is constant --> O(1)
                 self.current_difficulty = mountain.difficulty_level #Assignment is constant --> O(1)
             if mountain.difficulty_level == self.current_difficulty:
-                self.current_difficulty_list.append(mountain)  #Appending is constant --> O(1
+                self.current_difficulty_list.append(mountain)  #Appending is constant --> O(1)
             else:  #Checking is constant --> O(1)
                 self.grouped.append(self.current_difficulty_list)  #Appending is constant --> O(1)
                 self.current_difficulty_list = [mountain] #Assignment is constant --> O(1)
