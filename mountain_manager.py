@@ -42,7 +42,7 @@ class MountainManager:
         except KeyError: #Constant --> O(1)
             print("mountain not in list") #Constant --> O(1)
 
-    def edit_mountain(self, old: Mountain, new: Mountain):
+    def edit_mountain(self, old: Mountain, new: Mountain) -> None:
         '''
         edits the mountain
 
