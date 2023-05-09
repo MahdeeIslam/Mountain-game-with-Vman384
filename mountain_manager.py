@@ -65,22 +65,21 @@ class MountainManager:
         except KeyError: #Constant --> O(1)
             print("mountain not in list") #Constant --> O(1)
 
-    def mountains_with_difficulty(self, diff: int)-> None:
+    def mountains_with_difficulty(self, diff: int)-> list[Mountain]:
         '''
         Return a list of all mountains with this difficulty.
 
-        Complexity : Best-case time complexity: O(1)
-                    The best case occurs when the hash table is empty, so there are no mountains to check. In this case, 
-                    the method returns an empty list in constant time.
+        Complexity : Best-case time complexity: O(N)
+                    Will always have to check the whole hash table therefore is O(N), 
+                    where N is the number of Mountain objects in the hash table.)
                     
                     Worst-case time complexity: O(N)
-                    The worst case occurs when all Mountain objects in the hash table have the specified difficulty level. 
-                    In this case, the method needs to check the difficulty level of every Mountain object in the hash table, 
-                    which takes O(N) time, where N is the number of Mountain objects in the hash table.
+                    Will always have to check the whole hash table therefore is O(N), 
+                    where N is the number of Mountain objects in the hash table.
                             
         '''
         self.matching_difficulty = [] #Assignment is constant --> O(1)
-        for mountian in self.mountain_store.array: #Constant --> O(1)
+        for mountian in self.mountain_store.array: #Constant --> O(N)
             if mountian == None: #Checking is constant --> O(1)
                 pass #Constant --> O(1)
             elif mountian[1].difficulty_level == diff:  #Checking is constant --> O(1)
@@ -94,10 +93,8 @@ class MountainManager:
         Returns a list of lists of all mountains, grouped by and sorted by ascending difficulty.
 
         Complexity : Best-case time complexity: O(N log N)
-                     The best case occurs when the Mountain objects in the hash table have already been sorted by difficulty 
-                     level. In this case, the method only needs to traverse the array of sorted Mountain objects once to group 
-                     them by difficulty level, which takes O(N) time. The mergesort method used to sort the Mountain objects 
-                     takes O(N log N) time, where N is the number of Mountain objects in the hash table.
+                     The best case and worst case are the same as will always have to use merge sort and since it is not
+                     incremental it will have to run all over again. N is the number of values.
                      
                      Worst-case time complexity: O(N log N)
                      The worst case occurs when the Mountain objects in the hash table are unsorted, and all Mountain objects 

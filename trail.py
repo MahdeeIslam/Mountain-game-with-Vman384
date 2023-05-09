@@ -148,7 +148,7 @@ class Trail:
                         is an integer of real numbers.
 
         """
-        self.frontier = LinkedStack(100) #Assignment is constant --> O(1)
+        self.frontier = LinkedStack() #Assignment is constant --> O(1)
         self.visited = set() #Assignment is constant --> O(1)
         self.current_path = [] #Assignment is constant --> O(1)
         self.trail_to_explore = self #Assignment is constant --> O(1)
@@ -195,9 +195,13 @@ class Trail:
         self.all_paths = []
         self.trail_to_explore = self
         while self.trail_to_explore.store is not None:
-            if len(self.current_path) == k:
+            if len(self.current_path) == k and self.frontier.is_empty():
                 self.all_paths.append(self.current_path)
                 self.current_path = []
+            elif len(self.current_path) > k or (len(self.current_path) < k and self.frontier.is_empty() and self.trail_to_explore.store is None):
+                self.current_path = []
+                self.frontier = LinkedStack() #creating a new stack is better than clearing old one as we save time complexity and python will clear up the objects anyway
+                self.trail_to_explore = self
             if isinstance(self.trail_to_explore.store,TrailSplit):
                 if self.trail_to_explore.store.path_top not in self.visited:
                     self.frontier.push(self.trail_to_explore.store.path_follow)
