@@ -166,9 +166,6 @@ class Trail:
                     self.trail_to_explore = self #Assignment is constant --> O(1)
                     continue # Constant --> O(1)
             else: # Constant --> O(1)
-                if self.trail_to_explore.store == None: #Assignment is constant --> O(1)
-                    self.trail_to_explore = self.frontier.pop() # Popping is constant in a singly linked stack --> O(1)
-                    break # Constant --> O(1)
                 if self.trail_to_explore.store.mountain not in self.current_path: # Constant --> O(1)
                     self.current_path.append(self.trail_to_explore.store.mountain) # Appending in a list is constant --> O(1)
                 if self.trail_to_explore.store.following.store == None: # Constant --> O(1)
@@ -192,12 +189,12 @@ class Trail:
 
         Paths are unique if they take a different branch, even if this results in the same set of mountains.
         """
-        self.frontier = LinkedStack(100)
+        self.frontier = LinkedStack()
         self.visited = set()
         self.current_path = []
         self.all_paths = []
         self.trail_to_explore = self
-        while self.trail_to_explore.store != None:
+        while self.trail_to_explore.store is not None:
             if len(self.current_path) == k:
                 self.all_paths.append(self.current_path)
                 self.current_path = []
@@ -214,15 +211,12 @@ class Trail:
                     self.trail_to_explore = self
                     continue
             else:
-                if self.trail_to_explore.store == None:
-                    self.trail_to_explore = self.frontier.pop()
-                    break
                 self.current_path.append(self.trail_to_explore.store.mountain)
-                if self.trail_to_explore.store.following.store == None:
+                if self.trail_to_explore.store.following.store is None:
                     self.visited.add(self.trail_to_explore)
                     if not self.frontier.is_empty():
                         self.trail_to_explore = self.frontier.pop()
-                        if not self.frontier.is_empty() and self.trail_to_explore.store == None:
+                        if not self.frontier.is_empty() and self.trail_to_explore.store is None:
                             self.trail_to_explore = self.frontier.pop()
                     else:
                         self.trail_to_explore = self
