@@ -8,4 +8,6 @@ class Mountain:
     difficulty_level: int
     length: int
 
+    def __hash__(self) -> int:
+        return hash(Mountain)
  

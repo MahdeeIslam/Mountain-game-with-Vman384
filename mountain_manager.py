@@ -71,7 +71,7 @@ class MountainManager:
 
         Complexity : Best-case time complexity: O(N)
                     Will always have to check the whole hash table therefore is O(N), 
-                    where N is the number of Mountain objects in the hash table.)
+                    where N is the number of Mountain objects in the hash table.
                     
                     Worst-case time complexity: O(N)
                     Will always have to check the whole hash table therefore is O(N), 

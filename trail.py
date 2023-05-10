@@ -166,7 +166,8 @@ class Trail:
                     self.trail_to_explore = self #Assignment is constant --> O(1)
                     continue # Constant --> O(1)
             else: # Constant --> O(1)
-                if self.trail_to_explore.store.mountain not in self.current_path: # Constant --> O(1)
+                if self.trail_to_explore.store.mountain not in self.visited: # Constant --> O(1)
+                    self.visited.add( self.trail_to_explore.store.mountain)
                     self.current_path.append(self.trail_to_explore.store.mountain) # Appending in a list is constant --> O(1)
                 if self.trail_to_explore.store.following.store == None: # Constant --> O(1)
                     self.visited.add(self.trail_to_explore)  # Adding is linear time --> O(n)
@@ -213,7 +214,7 @@ class Trail:
                 else:
                     self.visited.add(self.trail_to_explore)
                     self.trail_to_explore = self
-                    continue
+                    self.frontier = LinkedStack()
             else:
                 self.current_path.append(self.trail_to_explore.store.mountain)
                 if self.trail_to_explore.store.following.store is None:
