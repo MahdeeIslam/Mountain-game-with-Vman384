@@ -43,6 +43,8 @@ class TrailSeries:
     --mountain--following--
 
     """
+    def __hash__(self) -> int:
+        return hash(TrailSeries)
 
     mountain: Mountain
     following: Trail
@@ -166,8 +168,8 @@ class Trail:
                     self.trail_to_explore = self #Assignment is constant --> O(1)
                     continue # Constant --> O(1)
             else: # Constant --> O(1)
-                if self.trail_to_explore.store.mountain not in self.visited: # Constant --> O(1)
-                    self.visited.add( self.trail_to_explore.store.mountain)
+                if self.trail_to_explore.store not in self.visited: # Constant --> O(1)
+                    self.visited.add( self.trail_to_explore.store)
                     self.current_path.append(self.trail_to_explore.store.mountain) # Appending in a list is constant --> O(1)
                 if self.trail_to_explore.store.following.store == None: # Constant --> O(1)
                     self.visited.add(self.trail_to_explore)  # Adding is linear time --> O(n)

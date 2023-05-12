@@ -18,7 +18,7 @@ def merge(l1: list[T], l2: list[T], key=lambda x:x) -> list[T]:
     cur_left = 0
     cur_right = 0
     while cur_left < len(l1) and cur_right < len(l2):
-        if l1[cur_left].difficulty_level <= l2[cur_right].difficulty_level:
+        if l1[cur_left] <= l2[cur_right]:
             new_list.append(l1[cur_left])
             cur_left += 1
         else:
