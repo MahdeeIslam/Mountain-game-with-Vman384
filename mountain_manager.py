@@ -1,6 +1,7 @@
 from mountain import Mountain
 from data_structures.hash_table import LinearProbeTable
-from algorithms.mergesort import mergesort
+from algorithms.vedanshsort import mergesort
+from double_key_table import DoubleKeyTable
 
 
 class MountainManager:
