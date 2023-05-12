@@ -192,6 +192,8 @@ class Trail:
 
         Paths are unique if they take a different branch, even if this results in the same set of mountains.
         """
+        if k<=0:
+            return []
         self.frontier = LinkedStack()
         self.visited = set()
         self.current_path = []
