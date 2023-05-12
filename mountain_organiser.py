@@ -43,7 +43,7 @@ class MountainOrganiser:
                     
                     Worst-case: The worst case occurs when each new mountain is inserted at the beginning of 
                     the list, causing all the elements in the list to be shifted. In this case, 
-                    the complexity would be O(M * (1 + log N + N)) = O(M * (N + log N)).
+                    the complexity would be O(M log(M) + N).
                     
 
         """   
