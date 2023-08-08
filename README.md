@@ -1,21 +1,3 @@
-# 23-S1-A2
-Mountain Climber Assignment
+This was an interactive mountain climber game made with my group partner ( Vedansh Malhan (Vman384) ). This game allows users to take part in enjoyable and fun mountain climing game and allows users to change and modify difficulties according to the users choice. This was also an incredibly rewarding and challanging project and allowd me to hone and better my skills.
 
-## Getting Started
-
-Instructions are extremely similar to those of A1:
-
-* Get a virtual environment up and running
-* `python -m pip install -r requirements.txt` (Replacing python with python3 or py - whatever works)
-
-## Running the GUI
-
-`python main.py`
-
-## Running the Tests
-
-`python run_tests.py`
-
-## Running just some of the Tests
-
-`python run_tests.py 1` will run all tests marked with `@number("1.x")`.
+Thank you and happy coding and happy climbing !!
